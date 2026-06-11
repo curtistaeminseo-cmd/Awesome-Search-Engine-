@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awesome Search Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+        }
+
+        header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4285f4;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #5f6368;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            color: #202124;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            padding: 20px;
+        }
+
+        .search-box-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #dfe1e5;
+            border-radius: 24px;
+            outline: none;
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            transition: box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            border-color: #dadce0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 24px;
+            background: #f8f9fa;
+            border: 1px solid #f8f9fa;
+            border-radius: 4px;
+            color: #3c4043;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            box-shadow: 0 1px 1px rgba(0,0,0,.1);
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
+            color: #202124;
+        }
+
+        .results {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 40px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .result-title {
+            color: #1a0dff;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+        }
+
+        .result-url {
+            color: #006621;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .result-snippet {
+            color: #545454;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dadce0;
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 10px 0;
+            color: #5f6368;
+            border-bottom: 3px solid transparent;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            color: #1a73e8;
+            border-bottom-color: #1a73e8;
+        }
+
+        .tab:hover {
+            color: #202124;
+        }
+
+        footer {
+            background: #f2f2f2;
+            padding: 15px 20px;
+            font-size: 14px;
+            color: #70757a;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .error {
+            color: #d33b27;
+            font-size: 16px;
+        }
+
+        .data-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .data-section {
+            margin-bottom: 30px;
+        }
+
+        .data-section h3 {
+            color: #202124;
+            font-size: 18px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #dadce0;
+            padding-bottom: 10px;
+        }
+
+        .data-item {
+            padding: 12px;
+            background: #f8f9fa;
+            margin: 8px 0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-item button {
+            padding: 5px 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .add-data-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .add-data-form input {
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .add-data-form button {
+            padding: 10px 20px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .add-data-form button:hover {
+            background: #357ae8;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .danger-button {
+            background: #d33b27 !important;
+            padding: 10px 20px !important;
+        }
+
+        .danger-button:hover {
+            background: #b8291f !important;
+        }
+
+        .about-header {
+            font-size: 72px;
+            color: black;
+            margin-bottom: 30px;
+            font-weight: 900;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+        .about-content {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .about-footer-text {
+            font-size: 16px;
+            color: #545454;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            margin-top: 20px;
+        }
+
+        .recent-searches {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .recent-searches h3 {
+            color: #202124;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .search-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            border: 1px solid #dadce0;
+        }
+
+        .search-item a {
+            color: #1a73e8;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .search-item a:hover {
+            text-decoration: underline;
+        }
+
+        .recent-searches {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .recent-searches h3 {
+            color: #202124;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .search-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            border: 1px solid #dadce0;
+        }
+
+        .search-item a {
+            color: #1a73e8;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .search-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">🔍⌨️ Awesome Search Engine</div>
+        <nav>
+            <a href="#" onclick="showHome()">Home</a>
+            <a href="#" onclick="showData()">Data</a>
+            <a href="#" onclick="showAbout()">About</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="homePage">
+            <h1 style="font-size: 48px; color: black; margin-bottom: 30px; font-weight: 900; font-family: 'Comic Sans MS', cursive;">Awesome Search Engine</h1>
+            <div class="search-box-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="Search the web..."
+                    onkeypress="handleKeyPress(event)"
+                >
+            </div>
+            <div class="buttons">
+                <button onclick="performSearch()">Search</button>
+                <button onclick="performLucky()">I'm Feeling Lucky</button>
+            </div>
+            <div class="recent-searches">
+                <h3>Recent Searches</h3>
+                <div id="searchList"></div>
+            </div>
+        </div>
+
+        <div id="resultsPage" style="display: none; width: 100%; max-width: 800px;">
+            <div class="search-box-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput2" 
+                    placeholder="Search the web..."
+                    onkeypress="handleKeyPress(event)"
+                >
+            </div>
+            <div class="tabs">
+                <a class="tab active" onclick="switchTab('all')">All</a>
+            </div>
+            <div id="resultsList" class="results"></div>
+        </div>
+
+        <div id="aboutPage" style="display: none;">
+            <div class="about-content">
+                <div class="about-header">About</div>
+                <div class="about-footer-text">An Awesome Search Engine</div>
+                <button class="back-button" onclick="showHome()">Back</button>
+            </div>
+        </div>
+
+        <div id="dataPage" style="display: none;">
+            <div class="data-content">
+                <h2 style="margin-bottom: 20px; color: #202124;">Data Manager</h2>
+                
+                <div class="data-section">
+                    <h3>Add New Website</h3>
+                    <div class="add-data-form">
+                        <input type="text" id="newTitle" placeholder="Website name" />
+                        <input type="text" id="newUrl" placeholder="URL (e.g., example.com)" />
+                        <input type="text" id="newSnippet" placeholder="Description" />
+                        <button onclick="addWebsite()">Add</button>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <h3>Current Websites</h3>
+                    <div id="websitesList"></div>
+                </div>
+
+                <div class="data-section">
+                    <h3>Search History</h3>
+                    <div id="historyList"></div>
+                </div>
+
+                <div class="button-group">
+                    <button class="danger-button" onclick="clearHistory()">Clear Search History</button>
+                    <button class="danger-button" onclick="resetAllData()">Reset All Data</button>
+                    <button onclick="showHome()">Back</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="dataPage" style="display: none;">
+            <div class="data-content">
+                <h2 style="margin-bottom: 20px; color: #202124;">Data Manager</h2>
+                
+                <div class="data-section">
+                    <h3>Add New Website</h3>
+                    <div class="add-data-form">
+                        <input type="text" id="newTitle" placeholder="Website name" />
+                        <input type="text" id="newUrl" placeholder="URL (e.g., example.com)" />
+                        <input type="text" id="newSnippet" placeholder="Description" />
+                        <button onclick="addWebsite()">Add</button>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <h3>Current Websites</h3>
+                    <div id="websitesList"></div>
+                </div>
+
+                <div class="data-section">
+                    <h3>Search History</h3>
+                    <div id="historyList"></div>
+                </div>
+
+                <div class="button-group">
+                    <button class="danger-button" onclick="clearHistory()">Clear Search History</button>
+                    <button class="danger-button" onclick="resetAllData()">Reset All Data</button>
+                    <button onclick="showHome()">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Awesome Search Engine. All rights reserved. | <a href="#" style="color: #70757a;">Privacy</a> | <a href="#" style="color: #70757a;">Terms</a></p>
+    </footer>
+
+    <script>
+        const sampleData = [
+            { title: "YouTube", url: "www.youtube.com", snippet: "Watch videos on almost any topic. Entertainment, music, education, and more." },
+            { title: "Wikipedia", url: "www.wikipedia.org", snippet: "The free encyclopedia with millions of articles on every topic imaginable." },
+            { title: "GitHub", url: "www.github.com", snippet: "Where developers share and collaborate on code projects." },
+            { title: "Stack Overflow", url: "www.stackoverflow.com", snippet: "Q&A community for programmers and developers worldwide." },
+            { title: "Reddit", url: "www.reddit.com", snippet: "Community discussion boards on thousands of topics." },
+            { title: "Twitter", url: "www.twitter.com", snippet: "Real-time news, updates, and conversations from around the world." },
+            { title: "Facebook", url: "www.facebook.com", snippet: "Connect with friends, family, and communities." },
+            { title: "Instagram", url: "www.instagram.com", snippet: "Share and discover photos, videos, and stories." },
+            { title: "Amazon", url: "www.amazon.com", snippet: "Shop millions of products online with fast shipping." },
+            { title: "eBay", url: "www.ebay.com", snippet: "Buy and sell items in online auctions and fixed-price listings." },
+            { title: "Netflix", url: "www.netflix.com", snippet: "Stream movies, TV shows, and documentaries on demand." },
+            { title: "Spotify", url: "www.spotify.com", snippet: "Listen to millions of songs and podcasts." },
+            { title: "Twitch", url: "www.twitch.tv", snippet: "Live streaming platform for gaming and creative content." },
+            { title: "Discord", url: "www.discord.com", snippet: "Chat, voice, and video communication platform for communities." },
+            { title: "LinkedIn", url: "www.linkedin.com", snippet: "Professional networking and job search platform." },
+            { title: "Medium", url: "www.medium.com", snippet: "Read and write stories about ideas, culture, and more." },
+            { title: "Dev.to", url: "www.dev.to", snippet: "Community for developers to share and discuss ideas." },
+            { title: "MDN Web Docs", url: "developer.mozilla.org", snippet: "Documentation for web technologies and development." },
+            { title: "Google", url: "www.google.com", snippet: "Search the web for anything." },
+            { title: "Bing", url: "www.bing.com", snippet: "Microsoft search engine with visual search features." },
+            { title: "Roblox", url: "www.roblox.com", snippet: "Play millions of games created by the community." },
+            { title: "Minecraft", url: "www.minecraft.net", snippet: "Build, explore, and survive in infinite worlds." },
+            { title: "Steam", url: "www.steampowered.com", snippet: "Digital platform for PC games and software." },
+            { title: "Epic Games", url: "www.epicgames.com", snippet: "Games, Fortnite, and the Epic Games Store." },
+            { title: "Khan Academy", url: "www.khanacademy.org", snippet: "Free learning platform with videos and exercises." },
+            { title: "Coursera", url: "www.coursera.org", snippet: "Online courses from top universities and companies." },
+            { title: "Udemy", url: "www.udemy.com", snippet: "Learn programming, design, business, and more." },
+            { title: "W3Schools", url: "www.w3schools.com", snippet: "Web development tutorials and references." },
+            { title: "CSS-Tricks", url: "css-tricks.com", snippet: "Daily articles about CSS, HTML, JavaScript and web design." }
+        ];
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            if (query.trim()) {
+                saveSearchHistory(query);
+                displayResults(query);
+            }
+        }
+
+        function performLucky() {
+            const randomWebsite = sampleData[Math.floor(Math.random() * sampleData.length)];
+            document.getElementById('searchInput').value = randomWebsite.title;
+        }
+
+        function displayResults(query) {
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('resultsPage').style.display = 'block';
+            document.getElementById('aboutPage').style.display = 'none';
+            document.getElementById('searchInput2').value = query;
+
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+
+            const queryWords = query.toLowerCase().split(/\s+/);
+            const results = sampleData.filter(item => {
+                const titleLower = item.title.toLowerCase();
+                const snippetLower = item.snippet.toLowerCase();
+                return queryWords.some(word => 
+                    titleLower.includes(word) ||
+                    snippetLower.includes(word)
+                );
+            });
+
+            if (results.length === 0) {
+                resultsList.innerHTML = `<p class="error">No results found for "${query}"</p>`;
+            } else {
+                results.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'result-item';
+                    resultDiv.innerHTML = `
+                        <a href="javascript:void(0);" class="result-title" onclick="window.open('https://' + '${result.url}', '_blank')">${result.title}</a>
+                        <div class="result-url">${result.url}</div>
+                        <div class="result-snippet">${result.snippet}</div>
+                    `;
+                    resultsList.appendChild(resultDiv);
+                });
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function showHome() {
+            document.getElementById('homePage').style.display = 'block';
+            document.getElementById('resultsPage').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'none';
+            document.getElementById('dataPage').style.display = 'none';
+            displayHistory();
+        }
+
+        function showAbout() {
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('resultsPage').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'block';
+            document.getElementById('dataPage').style.display = 'none';
+        }
+
+        function showData() {
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('resultsPage').style.display = 'none';
+            document.getElementById('aboutPage').style.display = 'none';
+            document.getElementById('dataPage').style.display = 'block';
+            displayDataManager();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                const input = event.target.id === 'searchInput' ? 
+                    document.getElementById('searchInput').value : 
+                    document.getElementById('searchInput2').value;
+                if (input.trim()) {
+                    saveSearchHistory(input);
+                    displayResults(input);
+                }
+            }
+        }
+
+        function saveSearchHistory(query) {
+            let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            if (!history.includes(query)) {
+                history.unshift(query);
+                if (history.length > 5) history.pop();
+                localStorage.setItem('searchHistory', JSON.stringify(history));
+            }
+        }
+
+        function displayHistory() {
+            let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            let html = '';
+            if (history.length > 0) {
+                history.forEach(search => {
+                    html += `<div class="search-item"><a onclick="searchAndGo('${search.replace(/'/g, "\\'")}')">${search}</a></div>`;
+                });
+            } else {
+                html = '<p style="color: #70757a; font-size: 14px;">No searches yet</p>';
+            }
+            document.getElementById('searchList').innerHTML = html;
+        }
+
+        function searchAndGo(query) {
+            document.getElementById('searchInput').value = query;
+            saveSearchHistory(query);
+            displayResults(query);
+            return false;
+        }
+
+        function addWebsite() {
+            const title = document.getElementById('newTitle').value.trim();
+            const url = document.getElementById('newUrl').value.trim();
+            const snippet = document.getElementById('newSnippet').value.trim();
+
+            if (title && url && snippet) {
+                sampleData.push({ title, url, snippet });
+                saveDataToStorage();
+                document.getElementById('newTitle').value = '';
+                document.getElementById('newUrl').value = '';
+                document.getElementById('newSnippet').value = '';
+                displayDataManager();
+            } else {
+                alert('Please fill in all fields');
+            }
+        }
+
+        function removeWebsite(index) {
+            sampleData.splice(index, 1);
+            saveDataToStorage();
+            displayDataManager();
+        }
+
+        function displayDataManager() {
+            let websiteHTML = '';
+            sampleData.forEach((site, index) => {
+                websiteHTML += `
+                    <div class="data-item">
+                        <div>
+                            <strong>${site.title}</strong><br/>
+                            <small style="color: #70757a;">${site.url}</small>
+                        </div>
+                        <button onclick="removeWebsite(${index})">Remove</button>
+                    </div>
+                `;
+            });
+            document.getElementById('websitesList').innerHTML = websiteHTML;
+
+            let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            let historyHTML = history.length > 0 ? '' : '<p style="color: #70757a;">No search history</p>';
+            history.forEach((search, index) => {
+                historyHTML += `
+                    <div class="data-item">
+                        <span>${search}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('historyList').innerHTML = historyHTML;
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all search history?')) {
+                localStorage.removeItem('searchHistory');
+                displayDataManager();
+                displayHistory();
+            }
+        }
+
+        function resetAllData() {
+            if (confirm('Reset all data? This will clear all websites and search history.')) {
+                sampleData.length = 0;
+                loadDefaultData();
+                localStorage.removeItem('searchHistory');
+                displayDataManager();
+                displayHistory();
+            }
+        }
+
+        function saveDataToStorage() {
+            localStorage.setItem('customWebsites', JSON.stringify(sampleData));
+        }
+
+        function loadDataFromStorage() {
+            const stored = localStorage.getItem('customWebsites');
+            if (stored) {
+                sampleData.length = 0;
+                sampleData.push(...JSON.parse(stored));
+            } else {
+                loadDefaultData();
+            }
+        }
+
+        function loadDefaultData() {
+            sampleData.length = 0;
+            sampleData.push(
+                { title: "YouTube", url: "www.youtube.com", snippet: "Watch videos on almost any topic. Entertainment, music, education, and more." },
+                { title: "Wikipedia", url: "www.wikipedia.org", snippet: "The free encyclopedia with millions of articles on every topic imaginable." },
+                { title: "GitHub", url: "www.github.com", snippet: "Where developers share and collaborate on code projects." },
+                { title: "Stack Overflow", url: "www.stackoverflow.com", snippet: "Q&A community for programmers and developers worldwide." },
+                { title: "Reddit", url: "www.reddit.com", snippet: "Community discussion boards on thousands of topics." },
+                { title: "Twitter", url: "www.twitter.com", snippet: "Real-time news, updates, and conversations from around the world." },
+                { title: "Facebook", url: "www.facebook.com", snippet: "Connect with friends, family, and communities." },
+                { title: "Instagram", url: "www.instagram.com", snippet: "Share and discover photos, videos, and stories." },
+                { title: "Amazon", url: "www.amazon.com", snippet: "Shop millions of products online with fast shipping." },
+                { title: "eBay", url: "www.ebay.com", snippet: "Buy and sell items in online auctions and fixed-price listings." },
+                { title: "Netflix", url: "www.netflix.com", snippet: "Stream movies, TV shows, and documentaries on demand." },
+                { title: "Spotify", url: "www.spotify.com", snippet: "Listen to millions of songs and podcasts." },
+                { title: "Twitch", url: "www.twitch.tv", snippet: "Live streaming platform for gaming and creative content." },
+                { title: "Discord", url: "www.discord.com", snippet: "Chat, voice, and video communication platform for communities." },
+                { title: "LinkedIn", url: "www.linkedin.com", snippet: "Professional networking and job search platform." },
+                { title: "Medium", url: "www.medium.com", snippet: "Read and write stories about ideas, culture, and more." },
+                { title: "Dev.to", url: "www.dev.to", snippet: "Community for developers to share and discuss ideas." },
+                { title: "MDN Web Docs", url: "developer.mozilla.org", snippet: "Documentation for web technologies and development." },
+                { title: "Google", url: "www.google.com", snippet: "Search the web for anything." },
+                { title: "Bing", url: "www.bing.com", snippet: "Microsoft search engine with visual search features." },
+                { title: "Roblox", url: "www.roblox.com", snippet: "Play millions of games created by the community." },
+                { title: "Minecraft", url: "www.minecraft.net", snippet: "Build, explore, and survive in infinite worlds." },
+                { title: "Steam", url: "www.steampowered.com", snippet: "Digital platform for PC games and software." },
+                { title: "Epic Games", url: "www.epicgames.com", snippet: "Games, Fortnite, and the Epic Games Store." },
+                { title: "Khan Academy", url: "www.khanacademy.org", snippet: "Free learning platform with videos and exercises." },
+                { title: "Coursera", url: "www.coursera.org", snippet: "Online courses from top universities and companies." },
+                { title: "Udemy", url: "www.udemy.com", snippet: "Learn programming, design, business, and more." },
+                { title: "W3Schools", url: "www.w3schools.com", snippet: "Web development tutorials and references." },
+                { title: "CSS-Tricks", url: "css-tricks.com", snippet: "Daily articles about CSS, HTML, JavaScript and web design." }
+            );
+        }
+
+        window.addEventListener('load', () => {
+            loadDataFromStorage();
+            displayHistory();
+            document.getElementById('searchInput').focus();
+        });
+    </script>
+</body>
+</html>
